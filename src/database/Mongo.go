@@ -9,6 +9,7 @@ import (
 )
 
 var User *mongo.Collection
+var Todo *mongo.Collection
 
 func Mongo(DBUrl string) error {
 	if DBUrl == "" {
@@ -21,11 +22,7 @@ func Mongo(DBUrl string) error {
 
 	db := client.Database("App-Todo")
 	User = db.Collection("users")
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+	Todo = db.Collection("todos")
 
 	log.Println("mongodb database connected successful")
 
