@@ -32,16 +32,56 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := services.CreateUser(user)
+	hash, _ := utils.HashPassword(user.Password)
+	var newUser = &models.UserModel{
+		Email:    user.Email,
+		Username: user.Username,
+		Password: hash,
+	}
+
+	result, err := services.CreateUser(newUser)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
+	token, _ := utils.SignToken(result.Email)
 	var NewData = &types.UserResponse{
 		Username: result.Username,
 		Email:    result.Email,
 		Message:  "User Created successful",
-		Token:    "token",
+		Token:    token,
 	}
+	utils.WriteJson(w, http.StatusOK, NewData)
+}
+
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	var user *models.UserModel
+
+	if err := utils.ParseJson(r, &user); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	data, err := services.FindUser(user)
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("user not exist"))
+		return
+	}
+
+	compare := utils.ComparePassword(user.Password, data.Password)
+	if !compare {
+		utils.WriteError(w, http.StatusBadGateway, fmt.Errorf("Wrong password"))
+		return
+	}
+
+	var NewData = &types.UserResponse{
+		Username: data.Username,
+		Email:    data.Email,
+		Message:  "Login successful",
+		Token:    "",
+	}
+
 	utils.WriteJson(w, http.StatusOK, NewData)
 }

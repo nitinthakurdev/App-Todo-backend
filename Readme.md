@@ -21,15 +21,15 @@ This project is a backend API built using Golang, leveraging MongoDB for efficie
 
 ## API Reference
 
-#### 1. user registeration- POST
+#### 1. user registration API - POST
 
 ```bash
-   /api/v1/user
+   /api/v1/user/create
 ```
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `username` | `string` | **Required**. Your API key |
-| `email` | `string` | **Required**. Your API key |
-| `password` | `string` | **Required**. Your API key |
+| `username` | `string` | **Required**. Your username |
+| `email`    | `string` | **Required**. Your email |
+| `password` | `string` | **Required**. Your password |
 
