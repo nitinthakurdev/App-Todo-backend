@@ -17,3 +17,19 @@ This project is a backend API built using Golang, leveraging MongoDB for efficie
 ```bash
  go run src/main.go
 ```
+
+
+## API Reference
+
+#### 1. user registeration- POST
+
+```bash
+   /api/v1/user
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `username` | `string` | **Required**. Your API key |
+| `email` | `string` | **Required**. Your API key |
+| `password` | `string` | **Required**. Your API key |
+
