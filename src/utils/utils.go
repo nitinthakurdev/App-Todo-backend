@@ -46,15 +46,15 @@ func ComparePassword(password, hashPassword string) bool {
 }
 
 func SignToken(email string) (string, error) {
-	fmt.Println("utils email", email)
+
 	claims := jwt.MapClaims{
 		"email": email,
 		"exp":   time.Now().Add(time.Hour * 1).Unix(),
 		"iat":   time.Now().Unix(),
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	SignToken, err := token.SignedString(config.Keys().Secret)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	SignToken, err := token.SignedString([]byte(config.Keys().Secret))
 	fmt.Println("err", err)
 	if err != nil {
 		return "", nil
@@ -62,6 +62,15 @@ func SignToken(email string) (string, error) {
 	return SignToken, nil
 }
 
-func VerifyToken() {
+func VerifyToken(tokenString string) {
 
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure that the token is signed with the expected method
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte("your-secret-key"), nil // Replace with your secret key
+	})
+	fmt.Println("token", token)
+	fmt.Println("err", err)
 }

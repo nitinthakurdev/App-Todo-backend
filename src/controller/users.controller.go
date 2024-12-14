@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/nitinthakurdev/todo-app-backend/src/models"
 	"github.com/nitinthakurdev/todo-app-backend/src/services"
@@ -76,12 +77,27 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token, _ := utils.SignToken(data.Email)
+
 	var NewData = &types.UserResponse{
 		Username: data.Username,
 		Email:    data.Email,
 		Message:  "Login successful",
-		Token:    "",
+		Token:    token,
 	}
+
+	cookies := &http.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		Secure:   true,
+		Path:     "/",
+	}
+
+	http.SetCookie(w, cookies)
+
+	utils.VerifyToken(token)
 
 	utils.WriteJson(w, http.StatusOK, NewData)
 }
