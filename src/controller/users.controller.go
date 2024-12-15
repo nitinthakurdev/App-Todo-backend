@@ -97,7 +97,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, cookies)
 
-	utils.VerifyToken(token)
+	// utils.VerifyToken(token)
 
 	utils.WriteJson(w, http.StatusOK, NewData)
 }
